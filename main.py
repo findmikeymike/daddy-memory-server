@@ -108,6 +108,15 @@ def get_memory_client():
         raise HTTPException(status_code=500, detail="Memory client not initialized")
     return memory_client
 
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "status": "healthy",
+        "service": "daddy-memory-server",
+        "version": "1.0.0"
+    }
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
@@ -353,11 +362,14 @@ if __name__ == "__main__":
         logger.error(f"❌ Missing required environment variables: {missing_vars}")
         exit(1)
     
+    # Get port from environment
+    port = int(os.getenv("PORT", 8000))
+    
     # Run server
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8000,
+        port=port,
         reload=False,
         log_level="info"
     )
